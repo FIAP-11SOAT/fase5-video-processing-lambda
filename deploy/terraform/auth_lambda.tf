@@ -7,7 +7,6 @@ module "auth_lambda" {
   variables_map = {
     COGNITO_USER_POOL_ID        = local.aws_infra_secrets["COGNITO_USER_POOL_ID"]
     COGNITO_USER_POOL_CLIENT_ID = local.aws_infra_secrets["COGNITO_USER_POOL_CLIENT_ID"]
-    MS_TOKEN_SECRET             = local.aws_infra_secrets["MS_TOKEN_SECRET"]
   }
 }
 
