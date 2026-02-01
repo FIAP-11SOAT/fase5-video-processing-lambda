@@ -79,9 +79,8 @@ class TestGetUserInfoUseCase:
 
         use_case = GetUserInfoUseCase(mock_repository)
 
-        os.environ['COGNITO_USER_POOL_ID'] = 'us-east-1_test123'
-        os.environ['COGNITO_CLIENT_ID'] = 'test-client-id'
-        token = b64encode(f"{os.environ['COGNITO_USER_POOL_ID']}:{os.environ['COGNITO_CLIENT_ID']}".encode()).decode()
+        
+        token = "header.payload.signature"
 
         result = use_case.execute(token)
 
@@ -107,7 +106,12 @@ class TestGetUserByIdUseCase:
 
         use_case = GetUserByIdUseCase(mock_repository)
 
-        result = use_case.execute("123")
+        # create valid ms_token (base64 of pool_id:client_id)
+        os.environ['COGNITO_USER_POOL_ID'] = 'us-east-1_test123'
+        os.environ['COGNITO_CLIENT_ID'] = 'test-client-id'
+        ms_token = b64encode(f"{os.environ['COGNITO_USER_POOL_ID']}:{os.environ['COGNITO_CLIENT_ID']}".encode()).decode()
+
+        result = use_case.execute(ms_token, "123")
 
         assert result == expected_user
         mock_repository.get_user_by_id.assert_called_once_with("123")
@@ -116,5 +120,9 @@ class TestGetUserByIdUseCase:
         mock_repository = Mock()
         use_case = GetUserByIdUseCase(mock_repository)
 
+        os.environ['COGNITO_USER_POOL_ID'] = 'us-east-1_test123'
+        os.environ['COGNITO_CLIENT_ID'] = 'test-client-id'
+        ms_token = b64encode(f"{os.environ['COGNITO_USER_POOL_ID']}:{os.environ['COGNITO_CLIENT_ID']}".encode()).decode()
+
         with pytest.raises(ValueError, match="User ID is required"):
-            use_case.execute("")
+            use_case.execute(ms_token, "")

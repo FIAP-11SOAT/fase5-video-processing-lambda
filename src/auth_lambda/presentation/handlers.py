@@ -1,6 +1,4 @@
 from typing import Dict, Any
-import os
-from base64 import b64encode
 
 from src.auth_lambda.application.authenticate_user_use_case import AuthenticateUserUseCase
 from src.auth_lambda.application.get_user_by_id_use_case import GetUserByIdUseCase
@@ -15,7 +13,6 @@ from src.auth_lambda.presentation.request_parser import (
     extract_ms_token,
 )
 from src.auth_lambda.presentation.response_builder import create_success_response
-from src.auth_lambda.domain.exceptions import InvalidTokenException
 from src.common.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -86,22 +83,13 @@ def user_by_id_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     try:
         ms_token = extract_ms_token(event)
 
-        user_pool_id = os.environ.get("COGNITO_USER_POOL_ID")
-        client_id = os.environ.get("COGNITO_CLIENT_ID")
-        if not user_pool_id or not client_id:
-            raise ValueError("COGNITO_USER_POOL_ID and COGNITO_CLIENT_ID must be set for MS token validation")
-
-        expected = b64encode(f"{user_pool_id}:{client_id}".encode()).decode()
-        if ms_token != expected:
-            raise InvalidTokenException("Invalid MS token")
-
         user_id = extract_path_parameter(event, "user_id")
 
         logger.info("get_user_by_id_request", user_id=user_id)
 
         repository = get_auth_repository()
         use_case = GetUserByIdUseCase(repository)
-        user = use_case.execute(user_id)
+        user = use_case.execute(ms_token, user_id)
 
         logger.info("user_retrieved_by_id", user_id=user.user_id, username=user.username)
 

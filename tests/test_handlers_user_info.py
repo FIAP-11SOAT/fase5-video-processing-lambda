@@ -22,7 +22,7 @@ class TestUserInfoHandler:
 
         os.environ['COGNITO_USER_POOL_ID'] = 'us-east-1_test123'
         os.environ['COGNITO_CLIENT_ID'] = 'test-client-id'
-        token = b64encode(f"{os.environ['COGNITO_USER_POOL_ID']}:{os.environ['COGNITO_CLIENT_ID']}".encode()).decode()
+        token = "header.payload.signature"
         event = {
             'headers': {
                 'Authorization': f'Bearer {token}'
@@ -49,7 +49,7 @@ class TestUserInfoHandler:
 
         os.environ['COGNITO_USER_POOL_ID'] = 'us-east-1_test123'
         os.environ['COGNITO_CLIENT_ID'] = 'test-client-id'
-        token = b64encode(f"{os.environ['COGNITO_USER_POOL_ID']}:{os.environ['COGNITO_CLIENT_ID']}".encode()).decode()
+        token = "header.payload.signature"
         event = {'headers': {'Authorization': f'Bearer {token}'}}
 
         response = user_info_handler(event, None)
@@ -68,7 +68,7 @@ class TestUserInfoHandler:
 
         os.environ['COGNITO_USER_POOL_ID'] = 'us-east-1_test123'
         os.environ['COGNITO_CLIENT_ID'] = 'test-client-id'
-        token = b64encode(f"{os.environ['COGNITO_USER_POOL_ID']}:{os.environ['COGNITO_CLIENT_ID']}".encode()).decode()
+        token = "header.payload.signature"
         event = {'headers': {'authorization': f'Bearer {token}'}}
 
         response = user_info_handler(event, None)
