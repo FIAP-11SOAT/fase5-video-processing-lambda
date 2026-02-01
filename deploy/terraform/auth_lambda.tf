@@ -1,14 +1,15 @@
 module "auth_lambda" {
   source = "./modules/lambda"
 
-  project_name = "${var.project_name}-auth"
-  image_name   = "default-lambda-image"
+  project_name                = "${var.project_name}-auth"
+  image_name                  = "default-lambda-image"
+
   variables_map = {
-    COGNITO_USER_POOL_ID = local.aws_infra_secrets["COGNITO_USER_POOL_ID"]
+    COGNITO_USER_POOL_ID        = local.aws_infra_secrets["COGNITO_USER_POOL_ID"]
     COGNITO_USER_POOL_CLIENT_ID = local.aws_infra_secrets["COGNITO_USER_POOL_CLIENT_ID"]
+    MS_TOKEN_SECRET             = local.aws_infra_secrets["MS_TOKEN_SECRET"]
   }
 }
-
 
 # API Gateway Lambda Integration
 resource "aws_apigatewayv2_integration" "lambda_integration" {

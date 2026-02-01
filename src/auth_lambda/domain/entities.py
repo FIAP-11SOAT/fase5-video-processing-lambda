@@ -25,7 +25,6 @@ class User:
 
 @dataclass
 class AuthToken:
-    """Authentication token entity"""
     access_token: str
     id_token: str
     refresh_token: str
@@ -33,7 +32,6 @@ class AuthToken:
     expires_in: int = 3600
     
     def to_dict(self) -> dict:
-        """Convert token to dictionary"""
         return {
             'access_token': self.access_token,
             'id_token': self.id_token,
