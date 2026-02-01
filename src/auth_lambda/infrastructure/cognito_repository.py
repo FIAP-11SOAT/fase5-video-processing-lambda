@@ -18,10 +18,11 @@ class CognitoRepository(IAuthRepository):
 
     def __init__(self, user_pool_id: Optional[str] = None, client_id: Optional[str] = None):
         self.user_pool_id = user_pool_id or os.environ.get('COGNITO_USER_POOL_ID')
-        self.client_id = client_id or os.environ.get('COGNITO_USER_POOL_CLIENT_ID')
+        # Tests and other code expect the client id env var to be named COGNITO_CLIENT_ID
+        self.client_id = client_id or os.environ.get('COGNITO_CLIENT_ID')
 
         if not self.user_pool_id or not self.client_id:
-            raise ValueError("COGNITO_USER_POOL_ID and COGNITO_USER_POOL_CLIENT_ID must be set")
+            raise ValueError("COGNITO_USER_POOL_ID and COGNITO_CLIENT_ID must be set")
 
         self.cognito_client = boto3.client('cognito-idp')
 

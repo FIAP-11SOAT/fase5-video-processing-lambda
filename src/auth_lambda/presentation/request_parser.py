@@ -22,6 +22,15 @@ def extract_bearer_token(event: Dict[str, Any]) -> str:
 
     return auth_header.replace('Bearer ', '')
 
+def extract_ms_token(event: Dict[str, Any]) -> str:
+    headers = event.get('headers', {})
+    ms_token = headers.get('X-MS-Token') or headers.get('x-ms-token')
+
+    if not ms_token:
+        raise ValueError('X-MS-Token header is required')
+
+    return ms_token
+
 
 def extract_path_parameter(event: Dict[str, Any], param_name: str) -> str:
     path_parameters = event.get('pathParameters', {})

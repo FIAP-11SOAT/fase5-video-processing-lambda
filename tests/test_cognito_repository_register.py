@@ -1,6 +1,3 @@
-"""
-Unit tests for CognitoRepository user registration
-"""
 import pytest
 import os
 from unittest.mock import patch, Mock
@@ -9,83 +6,65 @@ from botocore.exceptions import ClientError
 from src.auth_lambda.infrastructure.cognito_repository import CognitoRepository
 from src.auth_lambda.domain.exceptions import (
     UserAlreadyExistsException,
-    AuthenticationException
+    AuthenticationException,
 )
 
 class TestCognitoRepositoryRegister:
-    """Test cases for CognitoRepository user registration"""
-    
     def setup_method(self):
-        """Setup test fixtures"""
         os.environ['COGNITO_USER_POOL_ID'] = 'us-east-1_test123'
         os.environ['COGNITO_CLIENT_ID'] = 'test-client-id'
-    
+
     @patch('src.auth_lambda.infrastructure.cognito_repository.boto3')
     def test_register_user_success(self, mock_boto3):
-        """Test successful user registration"""
-        # Arrange
         mock_client = Mock()
         mock_boto3.client.return_value = mock_client
-        mock_client.sign_up.return_value = {
-            'UserSub': 'user-123'
-        }
-        
+        mock_client.sign_up.return_value = {'UserSub': 'user-123'}
+
         repo = CognitoRepository()
-        
-        # Act
+
         user = repo.register_user('testuser', 'Password123!', 'test@example.com')
-        
-        # Assert
+
         assert user.user_id == 'user-123'
         assert user.username == 'testuser'
         assert user.email == 'test@example.com'
         assert user.enabled is True
         mock_client.sign_up.assert_called_once()
-    
+
     @patch('src.auth_lambda.infrastructure.cognito_repository.boto3')
     def test_register_user_already_exists(self, mock_boto3):
-        """Test registration with existing username"""
-        # Arrange
         mock_client = Mock()
         mock_boto3.client.return_value = mock_client
-        
+
         error_response = {'Error': {'Code': 'UsernameExistsException', 'Message': 'User exists'}}
         mock_client.sign_up.side_effect = ClientError(error_response, 'SignUp')
-        
+
         repo = CognitoRepository()
-        
-        # Act & Assert
+
         with pytest.raises(UserAlreadyExistsException):
             repo.register_user('existinguser', 'Password123!')
-    
+
     @patch('src.auth_lambda.infrastructure.cognito_repository.boto3')
     def test_register_user_invalid_password(self, mock_boto3):
-        """Test registration with invalid password"""
-        # Arrange
         mock_client = Mock()
         mock_boto3.client.return_value = mock_client
-        
+
         error_response = {'Error': {'Code': 'InvalidPasswordException', 'Message': 'Password too weak'}}
         mock_client.sign_up.side_effect = ClientError(error_response, 'SignUp')
-        
+
         repo = CognitoRepository()
-        
-        # Act & Assert
+
         with pytest.raises(ValueError):
             repo.register_user('testuser', 'weak')
-    
+
     @patch('src.auth_lambda.infrastructure.cognito_repository.boto3')
     def test_register_user_other_error(self, mock_boto3):
-        """Test registration with other AWS error"""
-        # Arrange
         mock_client = Mock()
         mock_boto3.client.return_value = mock_client
-        
+
         error_response = {'Error': {'Code': 'InternalError', 'Message': 'Internal error'}}
         mock_client.sign_up.side_effect = ClientError(error_response, 'SignUp')
-        
+
         repo = CognitoRepository()
-        
-        # Act & Assert
+
         with pytest.raises(AuthenticationException):
             repo.register_user('testuser', 'Password123!')
