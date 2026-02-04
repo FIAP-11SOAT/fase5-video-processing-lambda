@@ -3,10 +3,23 @@ module "auth_lambda" {
 
   project_name                = "${var.project_name}-auth"
   image_name                  = "default-lambda-image"
+  additional_permissions_json = data.aws_iam_policy_document.lambda_additional_permissions.json
 
   variables_map = {
     COGNITO_USER_POOL_ID        = local.aws_infra_secrets["COGNITO_USER_POOL_ID"]
     COGNITO_USER_POOL_CLIENT_ID = local.aws_infra_secrets["COGNITO_USER_POOL_CLIENT_ID"]
+  }
+}
+
+data "aws_iam_policy_document" "lambda_additional_permissions" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "cognito-idp:*",
+    ]
+    resources = [
+      "arn:aws:cognito-idp:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:userpool/${local.aws_infra_secrets["COGNITO_USER_POOL_ID"]}"
+    ]
   }
 }
 
@@ -21,7 +34,7 @@ resource "aws_apigatewayv2_integration" "lambda_integration" {
 
 resource "aws_apigatewayv2_route" "auth_route" {
   api_id    = data.aws_apigatewayv2_api.http_api.id
-  route_key = "ANY /auth"
+  route_key = "ANY /auth/{proxy+}"
   target    = "integrations/${aws_apigatewayv2_integration.lambda_integration.id}"
 }
 

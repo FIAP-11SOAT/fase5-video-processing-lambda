@@ -14,7 +14,7 @@ from src.auth_lambda.domain.exceptions import (
 class TestCognitoRepositoryUserInfo:
     def setup_method(self):
         os.environ['COGNITO_USER_POOL_ID'] = 'us-east-1_test123'
-        os.environ['COGNITO_CLIENT_ID'] = 'test-client-id'
+        os.environ['COGNITO_USER_POOL_CLIENT_ID'] = 'test-client-id'
 
     @patch('src.auth_lambda.infrastructure.cognito_repository.boto3')
     def test_get_user_info_success(self, mock_boto3):

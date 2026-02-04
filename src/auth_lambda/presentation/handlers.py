@@ -15,10 +15,10 @@ from src.auth_lambda.presentation.request_parser import (
 from src.auth_lambda.presentation.response_builder import create_success_response
 from src.common.logging_config import get_logger
 
-logger = get_logger(__name__)
 
 
 def register_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+    logger = get_logger(__name__)
     try:
         body = parse_body(event)
         username = body.get("username")
@@ -42,6 +42,7 @@ def register_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 
 
 def authenticate_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+    logger = get_logger(__name__)
     try:
         body = parse_body(event)
         username = body.get("username")
@@ -62,6 +63,7 @@ def authenticate_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 
 
 def user_info_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+    logger = get_logger(__name__)
     try:
         access_token = extract_bearer_token(event)
 
@@ -73,17 +75,18 @@ def user_info_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 
         logger.info("user_info_retrieved", user_id=user.user_id, username=user.username)
 
-        return create_success_response({"user": user.to_dict()})
+        return create_success_response(user.to_dict())
 
     except Exception as e:
         return handle_error(e)
 
 
 def user_by_id_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+    logger = get_logger(__name__)
     try:
         ms_token = extract_ms_token(event)
 
-        user_id = extract_path_parameter(event, "user_id")
+        user_id = extract_path_parameter(event, "user_id", "user-by-id")
 
         logger.info("get_user_by_id_request", user_id=user_id)
 
@@ -93,7 +96,7 @@ def user_by_id_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 
         logger.info("user_retrieved_by_id", user_id=user.user_id, username=user.username)
 
-        return create_success_response({"user": user.to_dict()})
+        return create_success_response(user.to_dict())
 
     except Exception as e:
         return handle_error(e)

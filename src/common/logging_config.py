@@ -20,9 +20,16 @@ def reorder_and_filter_keys(logger, method_name, event_dict):
 
 def configure_logging(level: str = "INFO"):
     numeric_level = getattr(logging, level.upper(), logging.INFO)
-    logging.basicConfig(format="%(message)s",level=numeric_level)
+
+    root_logger = logging.getLogger()
+    root_logger.setLevel(numeric_level)
+
+    for handler in root_logger.handlers:
+        handler.setLevel(numeric_level)
+
     structlog.configure(
         processors=[
+            structlog.stdlib.filter_by_level,   # 🔴 ESSENCIAL
             structlog.stdlib.add_log_level,
             structlog.processors.TimeStamper(fmt="iso", utc=True),
             structlog.processors.format_exc_info,

@@ -21,7 +21,7 @@ class TestUserInfoHandler:
         mock_get_repo.return_value = mock_repo
 
         os.environ['COGNITO_USER_POOL_ID'] = 'us-east-1_test123'
-        os.environ['COGNITO_CLIENT_ID'] = 'test-client-id'
+        os.environ['COGNITO_USER_POOL_CLIENT_ID'] = 'test-client-id'
         token = "header.payload.signature"
         event = {
             'headers': {
@@ -48,7 +48,7 @@ class TestUserInfoHandler:
         mock_get_repo.return_value = mock_repo
 
         os.environ['COGNITO_USER_POOL_ID'] = 'us-east-1_test123'
-        os.environ['COGNITO_CLIENT_ID'] = 'test-client-id'
+        os.environ['COGNITO_USER_POOL_CLIENT_ID'] = 'test-client-id'
         token = "header.payload.signature"
         event = {'headers': {'Authorization': f'Bearer {token}'}}
 
@@ -67,7 +67,7 @@ class TestUserInfoHandler:
         mock_get_repo.return_value = mock_repo
 
         os.environ['COGNITO_USER_POOL_ID'] = 'us-east-1_test123'
-        os.environ['COGNITO_CLIENT_ID'] = 'test-client-id'
+        os.environ['COGNITO_USER_POOL_CLIENT_ID'] = 'test-client-id'
         token = "header.payload.signature"
         event = {'headers': {'authorization': f'Bearer {token}'}}
 
@@ -87,8 +87,8 @@ class TestUserByIdHandler:
         mock_get_repo.return_value = mock_repo
 
         os.environ['COGNITO_USER_POOL_ID'] = 'us-east-1_test123'
-        os.environ['COGNITO_CLIENT_ID'] = 'test-client-id'
-        token = b64encode(f"{os.environ['COGNITO_USER_POOL_ID']}:{os.environ['COGNITO_CLIENT_ID']}".encode()).decode()
+        os.environ['COGNITO_USER_POOL_CLIENT_ID'] = 'test-client-id'
+        token = b64encode(f"{os.environ['COGNITO_USER_POOL_ID']}:{os.environ['COGNITO_USER_POOL_CLIENT_ID']}".encode()).decode()
         event = {
             'headers': {'X-MS-Token': token},
             'pathParameters': {'user_id': '123'}
@@ -107,8 +107,8 @@ class TestUserByIdHandler:
         mock_get_repo.return_value = mock_repo
 
         os.environ['COGNITO_USER_POOL_ID'] = 'us-east-1_test123'
-        os.environ['COGNITO_CLIENT_ID'] = 'test-client-id'
-        token = b64encode(f"{os.environ['COGNITO_USER_POOL_ID']}:{os.environ['COGNITO_CLIENT_ID']}".encode()).decode()
+        os.environ['COGNITO_USER_POOL_CLIENT_ID'] = 'test-client-id'
+        token = b64encode(f"{os.environ['COGNITO_USER_POOL_ID']}:{os.environ['COGNITO_USER_POOL_CLIENT_ID']}".encode()).decode()
         event = {
             'headers': {'X-MS-Token': token},
             'pathParameters': {'user_id': '999'}
