@@ -5,10 +5,9 @@ from src.auth_lambda.domain.exceptions import UserAlreadyExistsException, Invali
 from src.auth_lambda.presentation.response_builder import create_error_response
 from src.common.logging_config import get_logger
 
-logger = get_logger(__name__)
-
 
 def handle_error(error: Exception) -> Dict[str, Any]:
+    logger = get_logger(__name__)
     error_type = type(error).__name__
     error_message = str(error)
 

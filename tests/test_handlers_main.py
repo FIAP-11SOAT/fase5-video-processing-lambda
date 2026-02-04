@@ -22,7 +22,7 @@ class TestMainHandler:
             mock_auth.return_value = {'statusCode': 200}
 
             event = {
-                'path': '/authenticate',
+                'path': '/auth/authenticate',
                 'httpMethod': 'POST'
             }
 

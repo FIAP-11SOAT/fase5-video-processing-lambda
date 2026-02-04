@@ -11,16 +11,17 @@ from src.auth_lambda.domain.exceptions import UserAlreadyExistsException, Authen
 from src.auth_lambda.domain.repositories import IAuthRepository
 from src.common.logging_config import get_logger
 
-logger = get_logger(__name__)
+
 
 
 class CognitoRepository(IAuthRepository):
 
     def __init__(self, user_pool_id: Optional[str] = None, client_id: Optional[str] = None):
+        self.logger = get_logger(__name__)
         self.user_pool_id = os.environ.get('COGNITO_USER_POOL_ID')
         self.client_id = os.environ.get('COGNITO_USER_POOL_CLIENT_ID')
 
-        logger.info(f'CognitoRepository {self.user_pool_id} {self.client_id}')
+        self.logger.info(f'CognitoRepository {self.user_pool_id} {self.client_id}')
 
         if not self.user_pool_id or not self.client_id:
             raise ValueError("COGNITO_USER_POOL_ID and COGNITO_USER_POOL_CLIENT_ID must be set")
@@ -89,7 +90,7 @@ class CognitoRepository(IAuthRepository):
         except ClientError as e:
             error_code = e.response['Error']['Code']
             if error_code in ['NotAuthorizedException', 'UserNotFoundException']:
-                logger.error(
+                self.logger.error(
                     f"Authentication failed for user {username}: {e.response['Error']['Message']} : Code {error_code}")
                 raise InvalidCredentialsException("Invalid username or password")
             else:

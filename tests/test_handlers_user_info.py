@@ -33,7 +33,7 @@ class TestUserInfoHandler:
 
         assert response['statusCode'] == 200
         body = json.loads(response['body'])
-        assert body['user']['username'] == 'testuser'
+        assert body['username'] == 'testuser'
 
     @patch('src.auth_lambda.presentation.handlers.get_auth_repository')
     def test_user_info_handler_missing_header(self, mock_get_repo):
@@ -98,7 +98,7 @@ class TestUserByIdHandler:
 
         assert response['statusCode'] == 200
         body = json.loads(response['body'])
-        assert body['user']['user_id'] == '123'
+        assert body['user_id'] == '123'
 
     @patch('src.auth_lambda.presentation.handlers.get_auth_repository')
     def test_user_by_id_handler_not_found(self, mock_get_repo):
