@@ -63,3 +63,6 @@ if [ "${IMAGE_TAG}" != "latest" ]; then
 fi
 echo "=========================================="
 
+aws lambda update-function-code \
+  --function-name fase5-video-processing-lambda-auth-lambda-function \
+  --image-uri 814147156565.dkr.ecr.us-east-1.amazonaws.com/fase5-video-processing-lambda-auth-lambda-ecr:latest
