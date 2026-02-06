@@ -3,7 +3,7 @@ from typing import Dict, Any
 from src.auth_lambda.presentation.error_handler import handle_error
 from src.auth_lambda.presentation.handlers import user_by_id_handler, user_info_handler, authenticate_handler, register_handler
 from src.auth_lambda.presentation.request_parser import get_route_info
-from src.auth_lambda.presentation.response_builder import create_error_response
+from src.auth_lambda.presentation.response_builder import create_error_response, create_success_response
 from src.common.logging_config import get_logger, configure_logging
 
 
@@ -25,6 +25,10 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         # Garante que o path comece com /
         if not path.startswith('/'):
             path = '/' + path
+
+        # Handle CORS preflight requests
+        if http_method == 'OPTIONS':
+            return create_success_response({}, 200)
 
         if path == '/register' and http_method == 'POST':
             return register_handler(event, context)
