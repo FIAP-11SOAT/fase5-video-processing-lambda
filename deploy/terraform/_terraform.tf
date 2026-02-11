@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket = "fase5-terraform-state"
-    key    = "fase5-infra-hacka/terraform.tfstate"
+    key    = "fase5-video-processing-lambda/terraform.tfstate"
     region = "us-east-1"
   }
 
